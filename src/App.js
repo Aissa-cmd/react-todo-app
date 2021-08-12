@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import useLocalStorage from './useLocalStorage';
+import Header from "./components/Header";
+import Input from "./components/Input";
+import Tasks from "./components/Tasks";
+import "./App.css";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [todos, setTodos] = useLocalStorage('todos', []);
+
+    const addTodo = (text) => {
+        const newTodo = { id: todos.length, text: text };
+        setTodos((currentTodos) => [...currentTodos, newTodo]);
+    };
+
+    const changeItemState = (id) => {
+        setTodos(currentTodos => {
+            return currentTodos.map(todo => {
+                if(todo.id === id) {
+                    return {...todo, compeleted: !todo.compeleted};
+                }
+                else return todo;
+            })
+        })
+    }
+
+    const deleteItem = (id) => {
+        setTodos(currentTodos => {
+            return currentTodos.filter(todo => todo.id !== id)
+        })
+    }
+
+    return (
+        <div>
+            <Header />
+            <div className="container">
+                <Input addTodo={addTodo} />
+                <Tasks todos={todos} changeItemState={changeItemState} deleteItem={deleteItem} />
+            </div>
+        </div>
+    );
 }
 
 export default App;
